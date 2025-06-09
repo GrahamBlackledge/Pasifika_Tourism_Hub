@@ -18,9 +18,9 @@ export default function NavBar() {
       </ul>
 
       <div className="navbar__profile">
-       
-        <span role="img" aria-label="profile">👤</span>
-      </div>
+  <Link to="/profile" aria-label="Go to Profile">👤</Link>
+</div>
+
     </nav>
   );
 }

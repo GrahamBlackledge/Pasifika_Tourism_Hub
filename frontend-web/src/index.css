@@ -65,3 +65,8 @@ ul { margin: 0; padding: 0; list-style: none; }
     opacity: 0; 
   }
 }
+
+.page-section {
+  min-height: 80vh;
+  padding: 2rem;
+}

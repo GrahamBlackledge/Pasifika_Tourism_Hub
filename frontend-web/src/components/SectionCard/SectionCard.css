@@ -1,0 +1,22 @@
+.section-card {
+  width: 320px;         
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.section-card img {
+  width: 100%;
+  height: 200px;        
+  object-fit: cover;
+  border: 3px solid #eee;
+  border-radius: 6px;
+  transition: transform .3s;
+}
+
+.section-card:hover img { transform: scale(1.05); }
+.section-card h3 {
+  font-family: 'Great Vibes', cursive;
+  font-size: 1.6rem;     /* was ~1.3rem */
+  margin: .6rem 0;
+}

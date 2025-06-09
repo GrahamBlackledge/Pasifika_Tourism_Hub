@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import './Footer.css';
 
 import snapchat from '../../assets/icons/Snapchat.png';
@@ -22,9 +23,9 @@ const Footer = () => {
       </div>
 
       <div className="footer__row footer__row--flags">
-        <img src={samoaFlag} alt="Samoa flag" />
-        <img src={fijiFlag}  alt="Fiji flag"  />
-        <img src={tongaFlag} alt="Tonga flag" />
+        <Link to="/samoa"><img src={samoaFlag} alt="Samoa flag" /></Link>
+        <Link to="/fiji"><img src={fijiFlag}  alt="Fiji flag"  /></Link>
+        <Link to="/tonga"><img src={tongaFlag} alt="Tonga flag" /></Link>
       </div>
 
       <div className="footer__row footer__row--text">

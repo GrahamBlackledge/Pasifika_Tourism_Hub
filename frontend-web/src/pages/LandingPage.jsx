@@ -10,12 +10,13 @@ import samoaFlag from '../assets/flags/sa.png';
 import fijiFlag  from '../assets/flags/fi.png';
 import tongaFlag from '../assets/flags/to.png';
 
+
 export default function LandingPage() {
   const countries = [
-    { name: 'Samoa', image: samoaImg, flag: samoaFlag },
-    { name: 'Fiji',  image: fijiImg,  flag: fijiFlag },
-    { name: 'Tonga', image: tongaImg, flag: tongaFlag },
-  ];
+  { name: 'Samoa',  image: samoaImg, flag: samoaFlag, href: '/samoa'},
+  { name: 'Fiji',  image: fijiImg, flag: fijiFlag, href: '/fiji'},
+  { name: 'Tonga',  image: tongaImg, flag: tongaFlag, href: '/tonga'},
+];
 
   return (
     <>
