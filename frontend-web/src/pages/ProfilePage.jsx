@@ -2,6 +2,7 @@ import React from 'react';
 
 import './ProfilePage.css';
 import  ProfileCard from '../components/ProfileCard/ProfileCard'
+import FavoriteActivities from "../components/CountryActivities/CountryActivities";
 
 function Profile() {
   return (
@@ -9,6 +10,7 @@ function Profile() {
       <h1>My Experiences</h1>
 
       <ProfileCard/>
+      <FavoriteActivities />
 
         
       </div>

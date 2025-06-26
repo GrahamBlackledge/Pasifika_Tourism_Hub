@@ -1,99 +1,100 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { useAuth } from '../components/context/AuthContext';
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useAuth } from "../components/context/AuthContext";
 
+import FlagSidebar       from "../components/FlagSidebar/FlagSidebar";
+import CountryActivities from "../components/CountryActivities/CountryActivities";
+import { getCountry, deleteActivity } from "../services/api";
+import "./ThingstodoPage.css";
 
-import FlagSidebar        from '../components/FlagSidebar/FlagSidebar';
-import CountryActivities  from '../components/CountryActivities/CountryActivities';
-import { getCountry } from '../services/api';
-import './ThingstodoPage.css'
-import { deleteActivity } from '../services/api';
+import samoaFlag from "../assets/flags/sa.png";
+import fijiFlag  from "../assets/flags/fi.png";
+import tongaFlag from "../assets/flags/to.png";
 
-import samoaFlag from '../assets/flags/sa.png';
-import fijiFlag  from '../assets/flags/fi.png';
-import tongaFlag from '../assets/flags/to.png';
-
-
+/* ──────────────────────────────────────────────────────────── */
 
 const COUNTRIES = [
   {
-    slug: 'samoa',
-    name: 'Samoa',
+    slug: "samoa",
+    name: "Samoa",
     flag: samoaFlag,
-    description:
-      'Enjoy Samoa’s natural beauty with a blend of beach and cultural activities.',
+    description: "Enjoy Samoa’s natural beauty with a blend of beach and cultural activities.",
   },
   {
-    slug: 'fiji',
-    name: 'Fiji',
+    slug: "fiji",
+    name: "Fiji",
     flag: fijiFlag,
-    description:
-      'Enjoy Fiji’s natural beauty with a blend of beach and cultural activities.',
-      },
+    description: "Enjoy Fiji’s natural beauty with a blend of beach and cultural activities.",
+  },
   {
-    slug: 'tonga',
-    name: 'Tonga',
+    slug: "tonga",
+    name: "Tonga",
     flag: tongaFlag,
-    description:
-      'Enjoy Tonga’s natural beauty with a blend of beach and cultural activities.',
-      },
+    description: "Enjoy Tonga’s natural beauty with a blend of beach and cultural activities.",
+  },
 ];
 
+/* ──────────────────────────────────────────────────────────── */
 
 export default function ThingsToDoPage() {
-  const { country: urlSlug } = useParams();  
+  /* route + navigation */
+  const { country: urlSlug } = useParams();
   const navigate             = useNavigate();
-  const [editMode, setEditMode] = useState(false);
-   const { isAdmin } = useAuth(); 
-  
 
-  
-  const initialSlug = COUNTRIES.some(c => c.slug === urlSlug) ? urlSlug : 'samoa';
+  /* auth */
+  const { currentUser, isAdmin, loading: authLoading } = useAuth(); // ← add loading flag
+
+  /* page-level state */
+
+  const initialSlug = COUNTRIES.some(c => c.slug === urlSlug) ? urlSlug : "samoa";
   const [selectedSlug, setSelectedSlug] = useState(initialSlug);
 
-  const [activities, setActivities] = useState([]); 
-  const [loading, setLoading]       = useState(true);
+  const [editMode, setEditMode] = useState(false);
+  const [activities, setActivities] = useState([]);   // always an array
+  const [loading, setLoading]       = useState(true); // country-data loading
 
+  /* ───── delete handler (admin only) ───── */
   const handleDelete = async (activityId) => {
-  try {
-    await deleteActivity(selectedSlug, activityId);
+    try {
+      await deleteActivity(selectedSlug, activityId);
+      setActivities(prev => prev.filter(a => a._id !== activityId));
+    } catch (err) {
+      console.error("Failed to delete activity:", err);
+      alert("Sorry, something went wrong.");
+    }
+  };
 
-    
-    setActivities(prev => prev.filter(a => a._id !== activityId));
-  } catch (err) {
-    console.error('Failed to delete activity:', err);
-    alert('Sorry, something went wrong.');
-  }
-};
-
-
-  
+  /* ───── keep URL + sidebar selection in sync ───── */
   useEffect(() => {
     if (urlSlug !== selectedSlug) {
       const exists = COUNTRIES.some(c => c.slug === urlSlug);
       if (exists) setSelectedSlug(urlSlug);
-      else navigate('/samoa/things-to-do', { replace: true });
+      else navigate("/samoa/things-to-do", { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlSlug]);
 
-   useEffect(() => {
-    setLoading(true);                              
-    getCountry(selectedSlug)                        
+  /* ───── fetch activities when country changes ───── */
+  useEffect(() => {
+    setLoading(true);
+    getCountry(selectedSlug)
       .then(res => {
         const acts = res.data.exploration?.activities || [];
-        setActivities(acts);
+        /*  IMPORTANT: attach countrySlug for likes API  */
+        setActivities(acts.map(a => ({ ...a, countrySlug: selectedSlug })));
       })
       .catch(err => {
         console.error(err);
         setActivities([]);
       })
-      .finally(() => setLoading(false));         
-  }, [selectedSlug]);   
+      .finally(() => setLoading(false));
+  }, [selectedSlug]);
 
   const handleSelect = slug => navigate(`/${slug}/things-to-do`);
-
   const activeCountry = COUNTRIES.find(c => c.slug === selectedSlug);
+
+  /* ─────  WAIT for Firebase auth  ───── */
+  if (authLoading) return null;           // or a spinner
 
   return (
     <div className="page-layout">
@@ -103,17 +104,17 @@ export default function ThingsToDoPage() {
         onSelect={handleSelect}
       />
 
-   <div className="main-content">
-  {loading ? (
-    <p>Loading activities…</p>
-  ) : (
-    <>
-      
-      <div className="country-header">
-        <h1>{activeCountry.name}</h1>
-        <p>{activeCountry.description}</p>
+      <div className="main-content">
+        {loading ? (
+          <p>Loading activities…</p>
+        ) : (
+          <>
+            {/* country header */}
+            <div className="country-header">
+              <h1>{activeCountry.name}</h1>
+              <p>{activeCountry.description}</p>
 
-        
+              {/* admin buttons */}
               {isAdmin && (
                 <div className="btn-row">
                   <button
@@ -125,24 +126,23 @@ export default function ThingsToDoPage() {
 
                   <button
                     className="admin-btn"
-                    onClick={() => setEditMode(!editMode)}
+                    onClick={() => setEditMode(prev => !prev)}
                   >
-                    {editMode ? 'Done' : 'Delete'}
+                    {editMode ? "Done" : "Delete"}
                   </button>
                 </div>
               )}
             </div>
 
-      
-      <CountryActivities
-        activities={activities}
-        editMode={editMode}      
-        onDelete={handleDelete}   
-      />
-    </>
-  )}
-</div>
-
+            {/* cards */}
+            <CountryActivities
+              activities={activities}
+              editMode={editMode}
+              onDelete={handleDelete}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 }

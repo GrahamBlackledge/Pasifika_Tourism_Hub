@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const likedRef = new Schema({
   countrySlug: { type: String, required: true },
-  activityId:  { type: Schema.Types.ObjectId, required: true },
+ activityId:  { type: String, required: true },  
 }, { _id: false });
 
 const userSchema = new Schema({
