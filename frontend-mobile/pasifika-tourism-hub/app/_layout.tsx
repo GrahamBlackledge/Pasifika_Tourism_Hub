@@ -10,6 +10,19 @@ export default function Layout() {
       <Drawer.Screen name="language"   options={{ title: 'Language' }} />
       <Drawer.Screen name="history"    options={{ title: 'History' }} />
       <Drawer.Screen name="kids"       options={{ title: 'Kids' }} />
+
+       <Drawer.Screen
+        name="samoa"
+        options={{ drawerItemStyle: { height: 0 }, drawerLabel: () => null }}
+      />
+      <Drawer.Screen
+        name="fiji"
+        options={{ drawerItemStyle: { height: 0 }, drawerLabel: () => null }}
+      />
+      <Drawer.Screen
+        name="tonga"
+        options={{ drawerItemStyle: { height: 0 }, drawerLabel: () => null }}
+      />
     </Drawer>
   );
 }

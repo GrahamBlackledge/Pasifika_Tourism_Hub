@@ -1,5 +1,11 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import {
+  ScrollView,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
+import { useRouter } from 'expo-router';
 import ScreenWrapper from '../layouts/ScreenWrapper';
 import HeroSection from '../components/HeroSection';
 import CountryCard, { Country } from '../components/CountryCard';
@@ -26,13 +32,22 @@ const countries: Country[] = [
 ];
 
 export default function LandingPage() {
+  const router = useRouter();
+
   return (
     <ScreenWrapper>
       <ScrollView contentContainerStyle={styles.content}>
         <HeroSection />
+
         <View style={styles.cardsContainer}>
           {countries.map((country) => (
-            <CountryCard key={country.name} {...country} />
+            <TouchableOpacity
+              key={country.name}
+              onPress={() => router.push(country.href)}
+              activeOpacity={0.8}
+            >
+              <CountryCard {...country} />
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>

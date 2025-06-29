@@ -13,7 +13,7 @@ export type Country = {
   name: string;
   image: any;
   flag: any;
-  href: string;
+  href: '/samoa' | '/fiji' | '/tonga';
 };
 
 export default function CountryCard({ name, image, flag, href }: Country) {
@@ -22,7 +22,8 @@ export default function CountryCard({ name, image, flag, href }: Country) {
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => router.push(href="/things")}
+      onPress={() => router.push(href)}
+      activeOpacity={0.8}
     >
       <Text style={styles.name}>{name}</Text>
       <View style={styles.imageWrap}>
@@ -42,6 +43,7 @@ const styles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,
     marginVertical: 16,
+    alignSelf: 'center',
   },
   name: {
     fontFamily: 'GreatVibes',
