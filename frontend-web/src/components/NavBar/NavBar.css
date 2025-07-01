@@ -65,3 +65,29 @@
 .navbar__logo img { width: 64px;height: auto;}
 
 .navbar__profile { font-size: 1.8rem; cursor: pointer; }
+
+.avatar-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 0;          /* prevents extra vertical space */
+  cursor: pointer;
+}
+
+/* upgraded size & perfect circle */
+.avatar-img {
+  width: 56px;              /* was 48px */
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;         
+}
+
+/* keep .navbar__profile for positioning only */
+.navbar__profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  /* kill inherited font-size so it doesn’t affect the image */
+  font-size: 1rem;
+}

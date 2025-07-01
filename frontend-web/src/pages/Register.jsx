@@ -1,38 +1,75 @@
+// src/pages/Register.jsx
 import { useState } from "react";
 import { useAuth } from "../components/context/AuthContext";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import "./Register.css";
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const { signUp } = useAuth();
+  const navigate   = useNavigate();
 
-  const handleRegister = async () => {
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+
+  /* ——— handle input ——— */
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  /* ——— create account ——— */
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    const { username, email, password } = form;
+
     try {
-      await signUp(email, password);
+      await signUp(email, password, username.trim());
+      navigate("/");                 // go to dashboard (change as needed)
     } catch (err) {
-      alert("Signed up successfully!");
-      alert("Error: " + err.message);
+      setError(err.message);
     }
   };
 
   return (
-    <div>
-      <h2>Login / Register</h2>
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        type="password"
-      />
-      <button onClick={handleRegister}>Sign Up</button>
-      <Link to={"/login"}>Click here to login</Link>
+    <div className="register-card">
+      <h2>Create Account</h2>
+
+      <form onSubmit={handleRegister}>
+        <input
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
+
+        <button type="submit">Sign Up</button>
+        {error && <p className="error">{error}</p>}
+      </form>
+
+      <p className="helper">
+        Already have an account? <Link to="/login">Log in here</Link>
+      </p>
     </div>
   );
 }

@@ -12,8 +12,10 @@ import SamoaHome from './pages/SamoaHome';
 import TongaHome from './pages/TongaHome';
 import FijiHome from './pages/FijiHome';
 import AddCountry from './pages/AddCountry';
+import AddActivity from './pages/AddActivity';
 import Login from './pages/Login';
 import Register from './pages/Register';
+
 
 
 
@@ -39,8 +41,10 @@ function App() {
         <Route path="/fiji"         element={<FijiHome />} />
         <Route path="/tonga"         element={<TongaHome />} />
         <Route path="/admin/add-country"  element={<AddCountry />} />
+        <Route path="/admin/add-activity/:slug" element={<AddActivity />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
         </Routes>
       </div>
 

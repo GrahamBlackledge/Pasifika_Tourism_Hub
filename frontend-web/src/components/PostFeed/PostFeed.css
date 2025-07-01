@@ -1,0 +1,78 @@
+.post-feed-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.post-form textarea {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+}
+
+.post-form button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.post-feed {
+  margin-top: 2rem;
+}
+
+.post-card {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.post-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+.post-card-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.post-dropdown-btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.post-dropdown-menu {
+    position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 5px;
+  z-index: 10;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.post-dropdown-menu button {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+}
+
+.post-dropdown-menu button:hover {
+    font-size: 1.1rem;
+}

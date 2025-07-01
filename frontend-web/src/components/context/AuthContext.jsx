@@ -1,50 +1,92 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
-import { auth } from "../../firebase";
+// components/context/AuthContext.js
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { auth, db } from "../../firebase";           // make sure db is exported
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  getIdTokenResult,
+  updateProfile,                                     // NEW
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";    // NEW
 
+/* --------------------------------------------------- */
+/* 1️⃣  RAW CONTEXT – export it in case anyone needs it */
+export const AuthContext = createContext(null);
+/* --------------------------------------------------- */
 
-const AuthContext = createContext();
-
+/* 2️⃣  Hook the rest of the app will call */
 export function useAuth() {
   return useContext(AuthContext);
 }
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin]         = useState(false);
 
-  const signUp = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-  }
+  /* ─────────── auth helpers ─────────── */
 
-  const login = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
+  /** Create a user, store username in both Auth (displayName)
+   *  and a matching Firestore document.
+   */
+  const signUp = async (email, password, username) => {
+    // create Auth account
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-  const logout = () => {
-    return signOut(auth)
-  }
+    // save the display name on the auth user
+    await updateProfile(cred.user, { displayName: username });
+
+    // create the Firestore user doc (adjust fields to taste)
+    await setDoc(doc(db, "users", cred.user.uid), {
+      username,
+      avatarUrl: "",          // empty for now; update after upload
+      likedActivities: [],
+    });
+  };
+
+  const login  = (email, password) =>
+    signInWithEmailAndPassword(auth, email, password);
+
+  const logout = () => signOut(auth);
+
+  /* ─────────── watch login / logout ─────────── */
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
-      // setLoading(false);
-    })
-      return () => unsubscribe();
-    }, []);
 
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+
+      // pull custom claims once per login
+      const { claims } = await getIdTokenResult(user, true);
+      setIsAdmin(claims.admin === true);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  /* ─────────── provider value ─────────── */
 
   const value = {
     currentUser,
+    isAdmin,
     signUp,
     login,
-    logout
+    logout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

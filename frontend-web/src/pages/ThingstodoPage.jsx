@@ -1,23 +1,18 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../components/context/AuthContext';
+
 
 import FlagSidebar        from '../components/FlagSidebar/FlagSidebar';
 import CountryActivities  from '../components/CountryActivities/CountryActivities';
+import { getCountry } from '../services/api';
+import './ThingstodoPage.css'
+import { deleteActivity } from '../services/api';
 
 import samoaFlag from '../assets/flags/sa.png';
 import fijiFlag  from '../assets/flags/fi.png';
 import tongaFlag from '../assets/flags/to.png';
 
-import firedancePic     from '../assets/images/firedance.jpg';
-import snorkelPic       from '../assets/images/snorkel.jpg';
-import samoamuseumPic   from '../assets/images/samoamuseum.jpg';
-import papaseeaPic      from '../assets/images/papaseea.jpg';
-import denarauPic       from '../assets/images/denarau.png';
-import fijimuseumPic    from '../assets/images/fijimuseum.jpg';
-import kavaPic          from '../assets/images/kava.jpg';
-import haamongaPic      from '../assets/images/haamonga.jpg';
-import tongavillagePic  from '../assets/images/tongavillage.jpg';
-import tongamuseumPic   from '../assets/images/tongamuseum.jpg';
 
 
 const COUNTRIES = [
@@ -27,12 +22,6 @@ const COUNTRIES = [
     flag: samoaFlag,
     description:
       'Enjoy Samoa’s natural beauty with a blend of beach and cultural activities.',
-    activities: [
-      { img: firedancePic,   title: "Experience the 'Siva' firedance", text: '...' },
-      { img: snorkelPic,     title: "Snorkel Samoa's coastal waters",  text: '...' },
-      { img: samoamuseumPic, title: 'Robert Louis Stevenson Museum',  text: '...' },
-      { img: papaseeaPic,    title: 'Papaseea Sliding Rocks',          text: '...' },
-    ],
   },
   {
     slug: 'fiji',
@@ -40,36 +29,43 @@ const COUNTRIES = [
     flag: fijiFlag,
     description:
       'Enjoy Fiji’s natural beauty with a blend of beach and cultural activities.',
-    activities: [
-      { img: kavaPic,        title: 'Attend a kava ceremony',          text: '...' },
-      { img: snorkelPic,     title: "Snorkel Fiji's coastal waters",   text: '...' },
-      { img: fijimuseumPic,  title: 'Thurston Gardens Fiji Museum',   text: '...' },
-      { img: denarauPic,     title: 'Travel to Denarau Port',          text: '...' },
-    ],
-  },
+      },
   {
     slug: 'tonga',
     name: 'Tonga',
     flag: tongaFlag,
     description:
       'Enjoy Tonga’s natural beauty with a blend of beach and cultural activities.',
-    activities: [
-      { img: tongavillagePic, title: 'Visit a local village',              text: '...' },
-      { img: snorkelPic,      title: "Explore Tonga's coral reefs",        text: '...' },
-      { img: haamongaPic,     title: 'Haʻamonga ʻa Maui Trilithon',        text: '...' },
-      { img: tongamuseumPic,  title: "Visit Tonga's National Museum",      text: '...' },
-    ],
-  },
+      },
 ];
 
 
 export default function ThingsToDoPage() {
   const { country: urlSlug } = useParams();  
   const navigate             = useNavigate();
+  const [editMode, setEditMode] = useState(false);
+   const { isAdmin } = useAuth(); 
+  
 
   
   const initialSlug = COUNTRIES.some(c => c.slug === urlSlug) ? urlSlug : 'samoa';
   const [selectedSlug, setSelectedSlug] = useState(initialSlug);
+
+  const [activities, setActivities] = useState([]); 
+  const [loading, setLoading]       = useState(true);
+
+  const handleDelete = async (activityId) => {
+  try {
+    await deleteActivity(selectedSlug, activityId);
+
+    
+    setActivities(prev => prev.filter(a => a._id !== activityId));
+  } catch (err) {
+    console.error('Failed to delete activity:', err);
+    alert('Sorry, something went wrong.');
+  }
+};
+
 
   
   useEffect(() => {
@@ -80,6 +76,20 @@ export default function ThingsToDoPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlSlug]);
+
+   useEffect(() => {
+    setLoading(true);                              
+    getCountry(selectedSlug)                        
+      .then(res => {
+        const acts = res.data.exploration?.activities || [];
+        setActivities(acts);
+      })
+      .catch(err => {
+        console.error(err);
+        setActivities([]);
+      })
+      .finally(() => setLoading(false));         
+  }, [selectedSlug]);   
 
   const handleSelect = slug => navigate(`/${slug}/things-to-do`);
 
@@ -93,13 +103,46 @@ export default function ThingsToDoPage() {
         onSelect={handleSelect}
       />
 
-      <div className="main-content">
-        <CountryActivities
-          countryName={activeCountry.name}
-          description={activeCountry.description}
-          activities={activeCountry.activities}
-        />
-      </div>
+   <div className="main-content">
+  {loading ? (
+    <p>Loading activities…</p>
+  ) : (
+    <>
+      
+      <div className="country-header">
+        <h1>{activeCountry.name}</h1>
+        <p>{activeCountry.description}</p>
+
+        
+              {isAdmin && (
+                <div className="btn-row">
+                  <button
+                    className="admin-btn"
+                    onClick={() => navigate(`/admin/add-activity/${selectedSlug}`)}
+                  >
+                    + Add
+                  </button>
+
+                  <button
+                    className="admin-btn"
+                    onClick={() => setEditMode(!editMode)}
+                  >
+                    {editMode ? 'Done' : 'Delete'}
+                  </button>
+                </div>
+              )}
+            </div>
+
+      
+      <CountryActivities
+        activities={activities}
+        editMode={editMode}      
+        onDelete={handleDelete}   
+      />
+    </>
+  )}
+</div>
+
     </div>
   );
 }

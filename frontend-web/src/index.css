@@ -70,3 +70,20 @@ ul { margin: 0; padding: 0; list-style: none; }
   min-height: 80vh;
   padding: 2rem;
 }
+
+.page-wrapper {
+  /* already has position: relative; keep that */
+  display: flex;          /* ➊ make this a flex-column */
+  flex-direction: column;
+  min-height: 100vh;      /* ➍ full viewport height */
+}
+
+main,                     /* whatever element wraps page-specific content */
+.page-section {           /* keeps your old selector working */
+  flex: 1 0 auto;         /* ➋ grow to fill leftover space */
+}
+
+footer {
+  flex-shrink: 0;         /* ➌ stay at the bottom, never squish */
+}
+/* ------------------------------------------- */

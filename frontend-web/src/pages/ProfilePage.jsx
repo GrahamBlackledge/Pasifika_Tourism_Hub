@@ -1,35 +1,18 @@
-import React from 'react';
+import PostFeed from "../components/PostFeed/PostFeed";
 
-import './ProfilePage.css';
+import "./ProfilePage.css";
+import ProfileCard from "../components/ProfileCard/ProfileCard";
 
 function Profile() {
   return (
     <div className="app">
+      <ProfileCard />
+
       <h1>My Experiences</h1>
 
-      <div className="profile-section">
-        <div className="user-info">
-          <img
-            src="/profile-placeholder.png" 
-            alt="User Profile"
-            className="profile-picture"
-          />
-          <div className="info-row">
-            <span className="label">Username:</span>
-            <span className="value">Gregory Fakename</span>
-          </div>
-          <div className="info-row">
-            <span className="label">Email:</span>
-            <span className="value">example@email.com</span>
-          </div>
-        </div>
-
-        <div className="experience-card">
-        </div>
-      </div>
+      <PostFeed />
     </div>
   );
 }
 
 export default Profile;
-

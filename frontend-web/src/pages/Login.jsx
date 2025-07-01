@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../components/context/AuthContext";
 import { Link } from "react-router-dom";
+import "./Login.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ export default function Login() {
   };
 
   return (
-    <div>
+    <div className="login-card">
       <h2>Log In</h2>
       <input
         placeholder="Email"

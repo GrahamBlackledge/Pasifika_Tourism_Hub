@@ -13,6 +13,8 @@ const {
 } = require('../controllers/countryController')
 
 const Country = require("../models/Country");
+const activityRoutes = require("./activityRoutes");
+
 
 // get all countries
 router.get("/", getAllCountries)
@@ -32,5 +34,7 @@ router.patch("/:id", updateCountryById)
 
 // delete country by ID
 router.delete("/:id", deleteCountryById)
+
+router.use("/slug/:slug/activities", activityRoutes);
 
 module.exports = router;

@@ -84,3 +84,19 @@
   align-items:center;
   min-height: 100vh;
 }
+
+.delete-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: #c04141;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 26px;
+  text-align: center;
+}

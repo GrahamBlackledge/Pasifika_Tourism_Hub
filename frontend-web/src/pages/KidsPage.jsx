@@ -6,6 +6,7 @@ const KidsPage = () => {
   return (
     <div className="kids-page">
       <h2 className="kids-heading">KIDS</h2>
+      
       <div className="video-container">
         <YouTube videoId="gl25ln8vIkA" className="youtube-video" />
         <YouTube videoId="79DijItQXMM" className="youtube-video" />
